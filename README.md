@@ -36,8 +36,34 @@ aimatch-cloud
 ### 2. 数据库初始化
 创建数据库：
 ```sql
-CREATE DATABASE aimatch_uaa DEFAULT CHARACTER SET utf8mb4;
-CREATE DATABASE aimatch_business DEFAULT CHARACTER SET utf8mb4;
+CREATE DATABASE aimatch DEFAULT CHARACTER SET utf8mb4;
+
+-- 创建用户表
+CREATE TABLE users (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    username VARCHAR(50) NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    phone VARCHAR(20) NOT NULL,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    UNIQUE KEY uk_username (username),
+    UNIQUE KEY uk_phone (phone)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- 创建性格匹配表
+CREATE TABLE personality_matches (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    user_id BIGINT NOT NULL,
+    personality_text_1 TEXT NOT NULL,
+    personality_text_2 TEXT NOT NULL,
+    match_score DECIMAL(5,2),
+    match_description TEXT,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    INDEX idx_user_id (user_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 ```
 
 ### 3. 修改配置
