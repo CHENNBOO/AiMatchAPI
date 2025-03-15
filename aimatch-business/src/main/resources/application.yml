@@ -1,6 +1,12 @@
 server:
   port: 9002
 
+# Deepseek配置
+deepseek:
+  api:
+    key: 
+    url: https://api.deepseek.com/v1/chat/completions
+
 spring:
   application:
     name: aimatch-business
