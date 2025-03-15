@@ -3,6 +3,7 @@ package com.aimatch.uaa.service.impl;
 import com.aimatch.uaa.dto.UserLoginDTO;
 import com.aimatch.uaa.dto.UserRegisterDTO;
 import com.aimatch.uaa.entity.User;
+import com.aimatch.uaa.exception.BusinessException;
 import com.aimatch.uaa.mapper.UserMapper;
 import com.aimatch.uaa.service.UserService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -29,7 +30,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     public User register(UserRegisterDTO registerDTO) {
         // 检查用户名是否已存在
         if (this.findByUsername(registerDTO.getUsername()) != null) {
-            throw new RuntimeException("用户名已存在");
+            throw new BusinessException("用户名已存在");
+        }
+
+        // 检查电话号码是否已存在
+        if (this.findByPhone(registerDTO.getPhone()) != null) {
+            throw new BusinessException("电话号码已存在");
         }
 
         // 创建用户实体
@@ -93,5 +99,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     public User findByUsername(String username) {
         return this.getOne(new LambdaQueryWrapper<User>()
                 .eq(User::getUsername, username));
+    }
+
+    @Override
+    public User findByPhone(String phone) {
+        return this.getOne(new LambdaQueryWrapper<User>()
+                .eq(User::getPhone, phone));
     }
 } 
