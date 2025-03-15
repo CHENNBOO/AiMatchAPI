@@ -22,12 +22,12 @@ public interface PersonalityMatchService extends IService<PersonalityMatch> {
     /**
      * 更新性格匹配分析结果
      *
-     * @param id 记录ID
+     * @param userId 用户ID
      * @param matchScore 匹配分数
      * @param matchDescription 匹配描述
      * @return 更新后的性格匹配记录
      */
-    PersonalityMatch updateMatchResult(Long id, BigDecimal matchScore, String matchDescription);
+    PersonalityMatch updateMatchResult(Long userId, BigDecimal matchScore, String matchDescription);
     
     /**
      * 获取用户的性格匹配历史记录

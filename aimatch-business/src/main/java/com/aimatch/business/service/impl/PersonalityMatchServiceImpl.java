@@ -57,21 +57,39 @@ public class PersonalityMatchServiceImpl extends ServiceImpl<PersonalityMatchMap
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public PersonalityMatch updateMatchResult(Long id, BigDecimal matchScore, String matchDescription) {
-        // 获取现有记录
-        PersonalityMatch match = getById(id);
+    public PersonalityMatch updateMatchResult(Long userId, BigDecimal matchScore, String matchDescription) {
+        // 查询用户最新的性格匹配记录
+        LambdaQueryWrapper<PersonalityMatch> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(PersonalityMatch::getUserId, userId)
+                   .orderByDesc(PersonalityMatch::getCreatedAt)
+                   .last("LIMIT 1");
+        
+        PersonalityMatch match = getOne(queryWrapper);
         if (match == null) {
-            throw new RuntimeException("匹配记录不存在");
+            throw new RuntimeException("未找到用户的性格匹配记录");
         }
+
+        // 检查是否已存在分析结果
+        if (match.getMatchScore() != null && match.getMatchDescription() != null) {
+            // 如果已存在分析结果，直接返回
+            return match;
+        }
+
+        // TODO: 调用AI分析接口获取匹配结果
+        // 这里需要实现调用AI接口的逻辑
         
         // 更新匹配结果
-        match.setMatchScore(matchScore);
-        match.setMatchDescription(matchDescription);
-        match.setUpdatedAt(LocalDateTime.now());
+        LambdaUpdateWrapper<PersonalityMatch> updateWrapper = new LambdaUpdateWrapper<>();
+        updateWrapper.eq(PersonalityMatch::getId, match.getId())
+                    .set(PersonalityMatch::getMatchScore, matchScore)
+                    .set(PersonalityMatch::getMatchDescription, matchDescription)
+                    .set(PersonalityMatch::getUpdatedAt, LocalDateTime.now());
         
         // 更新记录
-        updateById(match);
-        return match;
+        update(updateWrapper);
+        
+        // 重新查询并返回更新后的记录
+        return getById(match.getId());
     }
 
     @Override

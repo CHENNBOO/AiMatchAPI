@@ -32,13 +32,13 @@ public class PersonalityMatchController {
     /**
      * 更新性格匹配分析结果
      */
-    @PutMapping("/{id}/result")
+    @PutMapping("/{userId}/result")
     public ResponseEntity<PersonalityMatch> updateMatchResult(
-            @PathVariable Long id,
+            @PathVariable Long userId,
             @RequestBody Map<String, Object> result) {
         BigDecimal matchScore = new BigDecimal(result.get("matchScore").toString());
         String matchDescription = (String) result.get("matchDescription");
-        return ResponseEntity.ok(personalityMatchService.updateMatchResult(id, matchScore, matchDescription));
+        return ResponseEntity.ok(personalityMatchService.updateMatchResult(userId, matchScore, matchDescription));
     }
 
     /**
