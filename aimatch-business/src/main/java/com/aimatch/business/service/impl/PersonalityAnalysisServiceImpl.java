@@ -84,6 +84,9 @@ public class PersonalityAnalysisServiceImpl implements PersonalityAnalysisServic
                         Map<String, Object> messageMap = (Map<String, Object>) firstChoice.get("message");
                         String content = (String) messageMap.get("content");
                         
+                        // 处理content中的```json标记
+                        content = content.replaceAll("```json\\s*", "").replaceAll("```\\s*$", "").trim();
+                        
                         return objectMapper.readValue(content, PersonalityMatchResult.class);
                     }
                 }
