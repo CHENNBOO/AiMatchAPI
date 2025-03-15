@@ -1,0 +1,35 @@
+server:
+  port: 9000
+
+spring:
+  application:
+    name: aimatch-gateway
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+      routes:
+        - id: uaa-service
+          uri: lb://aimatch-uaa
+          predicates:
+            - Path=/uaa/**
+          filters:
+            - StripPrefix=1
+        - id: business-service
+          uri: lb://aimatch-business
+          predicates:
+            - Path=/business/**
+          filters:
+            - StripPrefix=1
+  redis:
+    host: localhost
+    port: 6379
+    database: 0
+
+logging:
+  level:
+    org.springframework.cloud.gateway: debug 
