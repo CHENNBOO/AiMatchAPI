@@ -1,13 +1,18 @@
 package com.aimatch.uaa.service.impl;
 
+import com.aimatch.uaa.config.JwtConfig;
 import com.aimatch.uaa.dto.UserLoginDTO;
 import com.aimatch.uaa.dto.UserRegisterDTO;
 import com.aimatch.uaa.entity.User;
 import com.aimatch.uaa.exception.BusinessException;
 import com.aimatch.uaa.mapper.UserMapper;
 import com.aimatch.uaa.service.UserService;
+import com.aimatch.uaa.util.JwtUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.BeanUtils;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -15,6 +20,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 用户服务实现类
@@ -24,6 +32,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Resource
     private PasswordEncoder passwordEncoder;
+
+    @Resource
+    private JwtConfig jwtConfig;
+
+    @Resource
+    private JwtUtil jwtUtil;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -63,16 +77,24 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         // 查询用户
         User user = this.findByUsername(loginDTO.getUsername());
         if (user == null) {
-            throw new RuntimeException("用户名或密码错误");
+            throw new BusinessException("用户名或密码错误");
         }
 
         // 验证密码
         if (!passwordEncoder.matches(loginDTO.getPassword(), user.getPassword())) {
-            throw new RuntimeException("用户名或密码错误");
+            throw new BusinessException("用户名或密码错误");
         }
 
-        // TODO: 生成JWT token
-        return "token";
+        // 生成JWT token
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("userId", user.getId());
+        claims.put("username", user.getUsername());
+        
+        Date now = new Date();
+        Date expiration = new Date(now.getTime() + jwtConfig.getExpiration() * 60 * 60 * 1000);
+        
+        String token = jwtUtil.generateToken(claims, expiration);
+        return jwtConfig.getTokenPrefix() + token;
     }
 
     @Override
@@ -81,12 +103,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         // 查询用户
         User user = this.getById(userId);
         if (user == null) {
-            throw new RuntimeException("用户不存在");
+            throw new BusinessException("用户不存在");
         }
 
         // 验证旧密码
         if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
-            throw new RuntimeException("原密码错误");
+            throw new BusinessException("原密码错误");
         }
 
         // 更新密码
