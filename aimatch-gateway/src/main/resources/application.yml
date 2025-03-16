@@ -12,6 +12,12 @@ spring:
     nacos:
       discovery:
         server-addr: localhost:8848
+        username: nacos
+        password: nacos
+        namespace: public
+        ephemeral: true
+        grpc:
+          enabled: false
     gateway:
       discovery:
         locator:

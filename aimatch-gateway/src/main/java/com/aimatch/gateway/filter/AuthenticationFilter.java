@@ -114,9 +114,15 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
             
             // 打印转发前的请求信息
             log.info("转发前的请求信息:");
+            log.info("- 原始路径: {}", request.getPath());
+            log.info("- 原始URI: {}", request.getURI());
             log.info("- 目标路径: {}", newRequest.getPath());
             log.info("- 目标URI: {}", newRequest.getURI());
             log.info("- 请求方法: {}", newRequest.getMethod());
+            log.info("- X-Forwarded-For: {}", newRequest.getHeaders().getFirst("X-Forwarded-For"));
+            log.info("- X-Forwarded-Proto: {}", newRequest.getHeaders().getFirst("X-Forwarded-Proto"));
+            log.info("- X-Forwarded-Port: {}", newRequest.getHeaders().getFirst("X-Forwarded-Port"));
+            log.info("- X-Forwarded-Host: {}", newRequest.getHeaders().getFirst("X-Forwarded-Host"));
             log.info("- 请求头:");
             newRequest.getHeaders().forEach((key, value) -> {
                 log.info("  {} = {}", key, value);
