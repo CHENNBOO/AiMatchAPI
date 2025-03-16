@@ -39,7 +39,7 @@ public class UserController {
         User user = userService.findByUsername(loginDTO.getUsername());
         
         Map<String, Object> result = new HashMap<>();
-        result.put("token", token);
+        result.put("token","Bearer "+ token);
         user.setPassword(null);
         result.put("user", user);
         

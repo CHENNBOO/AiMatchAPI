@@ -6,6 +6,8 @@ spring:
     web-application-type: reactive
   application:
     name: aimatch-gateway
+  profiles:
+    include: common
   cloud:
     nacos:
       discovery:
