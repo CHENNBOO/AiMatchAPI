@@ -1,18 +1,15 @@
 package com.aimatch.uaa.service.impl;
 
-import com.aimatch.uaa.config.JwtConfig;
+import com.aimatch.common.jwt.JwtPayload;
+import com.aimatch.common.jwt.JwtUtils;
 import com.aimatch.uaa.dto.UserLoginDTO;
 import com.aimatch.uaa.dto.UserRegisterDTO;
 import com.aimatch.uaa.entity.User;
 import com.aimatch.uaa.exception.BusinessException;
 import com.aimatch.uaa.mapper.UserMapper;
 import com.aimatch.uaa.service.UserService;
-import com.aimatch.uaa.util.JwtUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.BeanUtils;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -20,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,10 +30,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     private PasswordEncoder passwordEncoder;
 
     @Resource
-    private JwtConfig jwtConfig;
-
-    @Resource
-    private JwtUtil jwtUtil;
+    private JwtUtils jwtUtils;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -86,15 +79,17 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         }
 
         // 生成JWT token
-        Map<String, Object> claims = new HashMap<>();
-        claims.put("userId", user.getId());
-        claims.put("username", user.getUsername());
+        Map<String, Object> additionalInfo = new HashMap<>();
+        additionalInfo.put("userId", user.getId());
+
+        JwtPayload payload = JwtPayload.builder()
+                .userId(user.getId().toString())
+                .username(user.getUsername())
+                .roles(new String[]{"ROLE_USER"})
+                .additionalInfo(additionalInfo)
+                .build();
         
-        Date now = new Date();
-        Date expiration = new Date(now.getTime() + jwtConfig.getExpiration() * 60 * 60 * 1000);
-        
-        String token = jwtUtil.generateToken(claims, expiration);
-        return jwtConfig.getTokenPrefix() + token;
+        return jwtUtils.generateToken(payload);
     }
 
     @Override

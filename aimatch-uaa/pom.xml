@@ -66,6 +66,12 @@
             <artifactId>lombok</artifactId>
             <optional>true</optional>
         </dependency>
+        <!-- Common Module -->
+        <dependency>
+            <groupId>com.aimatch</groupId>
+            <artifactId>aimatch-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 
     <build>

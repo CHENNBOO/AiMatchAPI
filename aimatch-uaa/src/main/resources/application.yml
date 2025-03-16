@@ -4,6 +4,8 @@ server:
 spring:
   application:
     name: aimatch-uaa
+  profiles:
+    include: common
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
     url: jdbc:mysql://localhost:3306/aimatch?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false
@@ -35,10 +37,6 @@ springdoc:
     path: /swagger-ui.html
   api-docs:
     path: /v3/api-docs
-
-jwt:
-  secret: aimatch-secret-key
-  expiration: 7200000  # 2小时
 
 springfox:
   documentation:

@@ -9,7 +9,7 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
  *
  * @author AI Match Team
  */
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = {"com.aimatch.uaa", "com.aimatch.common"})
 @EnableDiscoveryClient
 public class UaaApplication {
     public static void main(String[] args) {
