@@ -42,4 +42,5 @@ spring:
 
 logging:
   level:
-    org.springframework.cloud.gateway: debug 
+    org.springframework.cloud.gateway: info
+    org.springframework.cloud.gateway.route.RouteDefinitionRouteLocator: error 
