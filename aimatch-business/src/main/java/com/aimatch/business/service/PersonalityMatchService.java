@@ -20,14 +20,12 @@ public interface PersonalityMatchService extends IService<PersonalityMatch> {
     PersonalityMatch createInitialMatch(PersonalityMatch personalityMatch);
     
     /**
-     * 更新性格匹配分析结果
+     * 获取性格匹配分析结果
      *
      * @param userId 用户ID
-     * @param matchScore 匹配分数
-     * @param matchDescription 匹配描述
-     * @return 更新后的性格匹配记录
+     * @return 获取性格匹配分析结果
      */
-    PersonalityMatch updateMatchResult(Long userId, BigDecimal matchScore, String matchDescription);
+    PersonalityMatch getMatchResult(Long userId);
     
     /**
      * 获取用户的性格匹配历史记录

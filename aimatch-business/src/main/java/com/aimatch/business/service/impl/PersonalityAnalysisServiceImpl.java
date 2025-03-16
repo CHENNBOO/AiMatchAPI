@@ -33,8 +33,6 @@ public class PersonalityAnalysisServiceImpl implements PersonalityAnalysisServic
     @Override
     public PersonalityMatchResult analyzePersonalityMatch(String personality1, String personality2) {
         log.info("进入性格匹配分析接口");
-        log.info("personality1：{}", personality1);
-        log.info("personality2：{}", personality2);
 
         String prompt = String.format(
             "作为一个专业的性格分析专家，请分析以下两种性格类型的匹配程度：\n\n" +

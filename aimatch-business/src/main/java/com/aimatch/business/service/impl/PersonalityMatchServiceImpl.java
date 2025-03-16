@@ -1,12 +1,16 @@
 package com.aimatch.business.service.impl;
 
+import com.aimatch.business.dto.PersonalityMatchResult;
 import com.aimatch.business.entity.PersonalityMatch;
 import com.aimatch.business.mapper.PersonalityMatchMapper;
+import com.aimatch.business.service.PersonalityAnalysisService;
 import com.aimatch.business.service.PersonalityMatchService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,8 +21,12 @@ import java.util.List;
 /**
  * 性格匹配服务实现类
  */
+@Slf4j
 @Service
 public class PersonalityMatchServiceImpl extends ServiceImpl<PersonalityMatchMapper, PersonalityMatch> implements PersonalityMatchService {
+
+    @Autowired
+    private PersonalityAnalysisService personalityAnalysisService;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -43,6 +51,8 @@ public class PersonalityMatchServiceImpl extends ServiceImpl<PersonalityMatchMap
             
             // 更新记录
             update(updateWrapper);
+            existingMatch.setPersonalityText1(personalityMatch.getPersonalityText1());
+            existingMatch.setPersonalityText2(personalityMatch.getPersonalityText2());
             return existingMatch;
         }
         
@@ -57,7 +67,7 @@ public class PersonalityMatchServiceImpl extends ServiceImpl<PersonalityMatchMap
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public PersonalityMatch updateMatchResult(Long userId, BigDecimal matchScore, String matchDescription) {
+    public PersonalityMatch getMatchResult(Long userId) {
         // 查询用户最新的性格匹配记录
         LambdaQueryWrapper<PersonalityMatch> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(PersonalityMatch::getUserId, userId)
@@ -72,12 +82,21 @@ public class PersonalityMatchServiceImpl extends ServiceImpl<PersonalityMatchMap
         // 检查是否已存在分析结果
         if (match.getMatchScore() != null && match.getMatchDescription() != null) {
             // 如果已存在分析结果，直接返回
+            log.info("已存在分析结果，直接返回：{}", match.toString());
             return match;
         }
+        log.info("不存在分析结果，调用AI分析接口获取匹配结果");
+        String personality1 = match.getPersonalityText1();
+        String personality2 = match.getPersonalityText2();
+        log.info("personality1：{}", personality1);
+        log.info("personality2：{}", personality2);
 
-        // TODO: 调用AI分析接口获取匹配结果
-        // 这里需要实现调用AI接口的逻辑
-        
+        //调用AI分析接口获取匹配结果
+        PersonalityMatchResult personalityMatchResult = personalityAnalysisService.analyzePersonalityMatch(personality1, personality2);
+        Integer matchScore = personalityMatchResult.getMatchPercentage();
+        String matchDescription = personalityMatchResult.getAnalysis();
+        log.info("matchScore：{}", matchScore);
+        log.info("matchDescription：{}", matchDescription);
         // 更新匹配结果
         LambdaUpdateWrapper<PersonalityMatch> updateWrapper = new LambdaUpdateWrapper<>();
         updateWrapper.eq(PersonalityMatch::getId, match.getId())

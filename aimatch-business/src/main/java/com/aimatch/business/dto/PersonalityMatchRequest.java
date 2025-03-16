@@ -7,7 +7,10 @@ import lombok.Data;
 @Data
 @ApiModel(description = "性格匹配分析请求")
 public class PersonalityMatchRequest {
-    
+
+    @ApiModelProperty(value = "用户id", required = true)
+    private String userId;
+
     @ApiModelProperty(value = "第一个人的性格特征", required = true, example = "性格开朗，善于交际，喜欢与人交流")
     private String personality1;
     
