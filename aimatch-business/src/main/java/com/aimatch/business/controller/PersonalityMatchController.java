@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
+import java.util.HashMap;
 
 /**
  * 性格匹配控制器
@@ -52,5 +53,17 @@ public class PersonalityMatchController {
     @GetMapping("/{id}")
     public ResponseEntity<PersonalityMatch> getMatchById(@PathVariable Long id) {
         return ResponseEntity.ok(personalityMatchService.getMatchById(id));
+    }
+
+    /**
+     * 获取用户的性格类型
+     */
+    @GetMapping("/personality-types")
+    public ResponseEntity<Map<String, String>> getPersonalityTypes(@RequestParam Long userId) {
+        PersonalityMatch latestMatch = personalityMatchService.getMatchResult(userId);
+        Map<String, String> personalityTypes = new HashMap<>();
+        personalityTypes.put("personalityType1", latestMatch.getPersonalityText1());
+        personalityTypes.put("personalityType2", latestMatch.getPersonalityText2());
+        return ResponseEntity.ok(personalityTypes);
     }
 } 
