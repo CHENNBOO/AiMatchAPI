@@ -23,10 +23,27 @@
             <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
             <version>${spring-cloud-alibaba.version}</version>
         </dependency>
+        <!-- LoadBalancer -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-loadbalancer</artifactId>
+        </dependency>
         <!-- Redis -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>
+        <!-- Common -->
+        <dependency>
+            <groupId>com.aimatch</groupId>
+            <artifactId>aimatch-common</artifactId>
+            <version>${project.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-web</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
     </dependencies>
 

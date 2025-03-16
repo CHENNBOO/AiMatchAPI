@@ -1,6 +1,6 @@
 package com.aimatch.gateway.filter;
 
-import com.aimatch.common.util.JwtUtil;
+import com.aimatch.common.jwt.JwtUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +23,7 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
     private static final Logger log = LoggerFactory.getLogger(AuthenticationFilter.class);
 
     @Autowired
-    private JwtUtil jwtUtil;
+    private JwtUtils jwtUtils;
 
     private static final List<String> WHITELIST = Arrays.asList(
             "/uaa/api/users/register",
@@ -55,7 +55,7 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
         }
 
         log.info("Found token: {}", token.substring(0, Math.min(token.length(), 20)) + "...");
-        if (jwtUtil.validateToken(token) && !jwtUtil.isTokenExpired(token)) {
+        if (jwtUtils.validateToken(token) && !jwtUtils.isTokenExpired(token)) {
             log.info("Token is valid, proceeding with request");
             
             // 创建新的请求，将token传递给下游服务
