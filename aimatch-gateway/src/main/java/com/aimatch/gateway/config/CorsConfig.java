@@ -15,8 +15,9 @@ public class CorsConfig {
     @Bean
     public CorsWebFilter corsFilter() {
         CorsConfiguration config = new CorsConfiguration();
-        // 允许的域名
+        // 允许的域名（开发+生产）
         config.addAllowedOrigin("http://localhost:5173");
+        config.addAllowedOrigin("http://1.15.33.197");
         // 允许的请求头
         config.addAllowedHeader("*");
         // 允许的方法
