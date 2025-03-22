@@ -78,9 +78,9 @@ public class VirtualInteractionServiceImpl implements VirtualInteractionService 
                         String reply = (String) messageMap.get("content");
                         
                         // 限制回复长度为50字
-                        if (reply.length() > 50) {
-                            reply = reply.substring(0, 50) + "...";
-                        }
+//                        if (reply.length() > 50) {
+//                            reply = reply.substring(0, 50) + "...";
+//                        }
                         
                         VirtualInteractionResponse virtualInteractionResponse = new VirtualInteractionResponse();
                         virtualInteractionResponse.setReply(reply);
