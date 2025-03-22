@@ -33,7 +33,7 @@ public class VirtualInteractionServiceImpl implements VirtualInteractionService 
             "你是一个具有以下性格特征人：\n" +
             "%s\n" +
             "请以这个性格特征来回复用户的消息。保持性格特征的一致性，并给出符合该性格的回应。\n" +
-            "注意：你的回复必须严格控制在180字到200字以内。\n" +
+            "注意：你的回复不能超过100字。\n" +
             "用户消息：%s\n" +
             "请给出回应：", personality, message);
             
@@ -50,7 +50,7 @@ public class VirtualInteractionServiceImpl implements VirtualInteractionService 
         
         Map<String, String> systemMessage = new HashMap<>();
         systemMessage.put("role", "system");
-        systemMessage.put("content", "你是一个具有特定性格特征的人。请始终保持这个性格特征来回复用户。你的回复必须严格控制在180字到200字以内。");
+        systemMessage.put("content", "你是一个具有特定性格特征的人。请始终保持这个性格特征来回复用户。你的回复不能超过100字。");
         messages.add(systemMessage);
         
         Map<String, String> userMessage = new HashMap<>();
