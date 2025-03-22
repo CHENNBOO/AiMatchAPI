@@ -22,6 +22,6 @@ public class VirtualInteractionController {
     @ApiOperation("虚拟互动")
     @PostMapping("/interaction")
     public VirtualInteractionResponse interact(@RequestBody VirtualInteractionRequest request) {
-        return virtualInteractionService.interact(request.getMessage(), request.getPersonality());
+        return virtualInteractionService.interact(request.getMessage(), request.getPersonality(), request.getUserId());
     }
 } 

@@ -6,4 +6,5 @@ import lombok.Data;
 public class VirtualInteractionRequest {
     private String message;
     private String personality;
+    private String userId;
 } 

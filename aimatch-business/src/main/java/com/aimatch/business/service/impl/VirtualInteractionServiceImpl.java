@@ -2,6 +2,8 @@ package com.aimatch.business.service.impl;
 
 import com.aimatch.business.config.DeepseekConfig;
 import com.aimatch.business.dto.VirtualInteractionResponse;
+import com.aimatch.business.entity.VirtualInteractionRecord;
+import com.aimatch.business.mapper.VirtualInteractionRecordMapper;
 import com.aimatch.business.service.VirtualInteractionService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpEntity;
@@ -10,6 +12,7 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -21,14 +24,18 @@ public class VirtualInteractionServiceImpl implements VirtualInteractionService 
 
     private final DeepseekConfig deepseekConfig;
     private final RestTemplate restTemplate;
+    private final VirtualInteractionRecordMapper recordMapper;
 
-    public VirtualInteractionServiceImpl(DeepseekConfig deepseekConfig, RestTemplate restTemplate) {
+    public VirtualInteractionServiceImpl(DeepseekConfig deepseekConfig, 
+                                       RestTemplate restTemplate,
+                                       VirtualInteractionRecordMapper recordMapper) {
         this.deepseekConfig = deepseekConfig;
         this.restTemplate = restTemplate;
+        this.recordMapper = recordMapper;
     }
 
     @Override
-    public VirtualInteractionResponse interact(String message, String personality) {
+    public VirtualInteractionResponse interact(String message, String personality, String userId) {
         String prompt = String.format(
             "你是一个具有以下性格特征人：\n" +
             "%s\n" +
@@ -77,13 +84,19 @@ public class VirtualInteractionServiceImpl implements VirtualInteractionService 
                         Map<String, Object> messageMap = (Map<String, Object>) firstChoice.get("message");
                         String reply = (String) messageMap.get("content");
                         
-                        // 限制回复长度为50字
-//                        if (reply.length() > 50) {
-//                            reply = reply.substring(0, 50) + "...";
-//                        }
-                        
                         VirtualInteractionResponse virtualInteractionResponse = new VirtualInteractionResponse();
                         virtualInteractionResponse.setReply(reply);
+                        
+                        // 保存聊天记录
+                        VirtualInteractionRecord record = new VirtualInteractionRecord();
+                        record.setUserMessage(message);
+                        record.setAiReply(reply);
+                        record.setPersonality(personality);
+                        record.setPrompt(prompt);
+                        record.setUserId(userId);
+                        record.setCreateTime(LocalDateTime.now());
+                        recordMapper.insert(record);
+                        
                         return virtualInteractionResponse;
                     }
                 }
