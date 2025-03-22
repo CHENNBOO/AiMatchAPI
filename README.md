@@ -1,100 +1,62 @@
- # AI Match 微服务项目
+# AiMatchAPI
+
+AiMatchAPI是一个基于Spring Cloud的微服务项目，提供AI匹配相关的API服务。
 
 ## 项目结构
 ```
 aimatch-cloud
-├── aimatch-gateway -- 网关服务 [9000]
-├── aimatch-uaa -- 认证和授权服务 [9001]
-└── aimatch-business -- 业务服务 [9002]
+├── aimatch-gateway    # 网关服务
+├── aimatch-uaa       # 认证授权服务
+└── aimatch-business  # 业务服务
 ```
 
 ## 技术栈
-- 框架：Spring Boot 2.7.x
-- 微服务：Spring Cloud 2021.0.x
-- 注册中心：Nacos
-- 数据库：MySQL 8.0
-- 缓存：Redis
-- ORM框架：MyBatis-Plus
-- API文档：Swagger 3.0
-- 项目管理：Maven
-- 认证方式：JWT Token
 
-## 环境要求
-- JDK 1.8+
-- Maven 3.6+
-- MySQL 8.0+
-- Redis 6.0+
-- Nacos 2.0+
+- **基础框架**：
+  - Spring Boot 2.7.17
+  - Spring Cloud 2021.0.8
+  - Spring Cloud Alibaba 2021.0.5.0
+
+- **服务治理**：
+  - Nacos 2.5.1 (服务注册与配置中心)
+
+- **数据访问**：
+  - MyBatis Plus 3.5.3.1
+  - MySQL 5.1.47
+
+- **安全认证**：
+  - JWT 0.9.1
+
+- **API文档**：
+  - Swagger 3.0.0
+
+- **开发环境**：
+  - JDK 1.8
+  - Maven 3.8.1
 
 ## 快速开始
 
-### 1. 环境准备
-- 安装并启动 MySQL
-- 安装并启动 Redis
-- 下载并启动 Nacos
-
-### 2. 数据库初始化
-创建数据库：
-```sql
-CREATE DATABASE aimatch DEFAULT CHARACTER SET utf8mb4;
-
--- 创建用户表
-CREATE TABLE users (
-    id BIGINT PRIMARY KEY AUTO_INCREMENT,
-    username VARCHAR(50) NOT NULL,
-    password VARCHAR(255) NOT NULL,
-    phone VARCHAR(20) NOT NULL,
-    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    UNIQUE KEY uk_username (username),
-    UNIQUE KEY uk_phone (phone)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- 创建性格匹配表
-CREATE TABLE personality_matches (
-    id BIGINT PRIMARY KEY AUTO_INCREMENT,
-    user_id BIGINT NOT NULL,
-    personality_text_1 TEXT NOT NULL,
-    personality_text_2 TEXT NOT NULL,
-    match_score DECIMAL(5,2),
-    match_description TEXT,
-    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users(id),
-    INDEX idx_user_id (user_id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
+1. 克隆项目
+```bash
+git clone https://github.com/CHENNBOO/AiMatchAPI.git
 ```
 
-### 3. 修改配置
-根据实际环境修改各服务的配置文件（application.yml）中的数据库、Redis和Nacos地址。
+2. 配置环境
+- 确保已安装JDK 1.8和Maven 3.8.1
+- 配置Nacos服务
+- 配置MySQL数据库
 
-### 4. 编译打包
+3. 编译运行
 ```bash
 mvn clean package
 ```
 
-### 5. 启动服务
-按照以下顺序启动服务：
-1. 启动Nacos
-2. 启动aimatch-gateway
-3. 启动aimatch-uaa
-4. 启动aimatch-business
+## 项目说明
 
-### 6. 访问服务
-- 网关服务：http://localhost:9000
-- UAA服务：http://localhost:9001
-- 业务服务：http://localhost:9002
-- Swagger文档：
-  - UAA服务：http://localhost:9001/swagger-ui/
-  - 业务服务：http://localhost:9002/swagger-ui/
+- `aimatch-gateway`: 网关服务，负责请求路由和过滤
+- `aimatch-uaa`: 认证授权服务，负责用户认证和权限管理
+- `aimatch-business`: 业务服务，提供核心业务功能
 
-## 项目维护
-- 代码规范：遵循阿里巴巴Java开发规范
-- 版本控制：使用Git进行版本管理
-- 接口文档：使用Swagger自动生成API文档
+## 贡献指南
 
-## 注意事项
-1. 首次运行需要确保Nacos、MySQL、Redis服务均已启动
-2. 各服务配置文件中的连接信息需要根据实际环境进行修改
-3. 建议使用IDEA等IDE工具进行开发
+欢迎提交Issue和Pull Request来帮助改进项目。
