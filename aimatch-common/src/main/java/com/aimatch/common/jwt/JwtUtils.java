@@ -29,12 +29,12 @@ public class JwtUtils {
         if (payload.getAdditionalInfo() != null) {
             claims.putAll(payload.getAdditionalInfo());
         }
-
+        System.out.println("Secret: " + jwtProperties.getSecret());
         return Jwts.builder()
                 .setClaims(claims)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + jwtProperties.getExpiration() * 1000))
-                .signWith(SignatureAlgorithm.HS512, jwtProperties.getSecret())
+                .signWith(SignatureAlgorithm.HS256, jwtProperties.getSecret())
                 .compact();
     }
 
@@ -65,11 +65,15 @@ public class JwtUtils {
      */
     public boolean validateToken(String token) {
         try {
+            System.out.println("Secret: " + jwtProperties.getSecret());
+            System.out.println("token: " + token);
             Jwts.parser()
                     .setSigningKey(jwtProperties.getSecret())
                     .parseClaimsJws(token);
             return true;
         } catch (Exception e) {
+            System.out.println("Token validation failed: " + e.getMessage());
+            e.printStackTrace();
             return false;
         }
     }
