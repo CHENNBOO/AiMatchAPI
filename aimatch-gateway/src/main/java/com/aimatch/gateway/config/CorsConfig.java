@@ -18,6 +18,7 @@ public class CorsConfig {
         // 允许的域名（开发+生产）
         config.addAllowedOrigin("http://localhost:5173");
         config.addAllowedOrigin("http://1.15.33.197");
+        config.addAllowedOrigin("http://aiunity.top");
         // 允许的请求头
         config.addAllowedHeader("*");
         // 允许的方法
@@ -25,7 +26,7 @@ public class CorsConfig {
         // 允许携带认证信息
         config.setAllowCredentials(true);
         // 预检请求的有效期，单位为秒
-        config.setMaxAge(3600L);
+        config.setMaxAge(6000L);
         
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource(new PathPatternParser());
         source.registerCorsConfiguration("/**", config);
